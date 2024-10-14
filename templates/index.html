@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-BATU Report Generator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="file"],
+        input[type="text"],
+        button {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            background-color: #fff;
+            color: #333;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .add-button,
+        #addSectionButton {
+            background-color: #28a745;
+            margin-top: 10px;
+        }
+
+        .add-button:hover,
+        #addSectionButton:hover {
+            background-color: #218838;
+        }
+
+        .remove-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+
+        .remove-button:hover {
+            background-color: #c82333;
+        }
+
+        .remove-buttonS {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 140px;
+            height: 30px;
+            border-radius: -23%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+
+        .remove-buttonS:hover {
+            background-color: #c82333;
+        }
+
+        #addSectionButton {
+            background-color: #17a2b8;
+            margin-top: 20px;
+        }
+
+        #addSectionButton:hover {
+            background-color: #138496;
+        }
+
+        .file-input-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .file-input-container label {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .file-input-container input[type="file"] {
+            flex: 2;
+        }
+
+        .file-input-container button {
+            margin-left: 10px;
+        }
+
+        .section-buttons {
+            margin-top: auto;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            input[type="file"],
+            input[type="text"],
+            button {
+                width: 100%;
+                margin: 5px 0 10px;
+            }
+        }
+
+        .customization-form {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .customization-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .customization-form select,
+        .customization-form input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .customization-form .customization-section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Report Generator/PDF Merger</h1>
+        <form id="pdfForm" enctype="multipart/form-data">
+            <div class="section" id="coverPageContainer">
+                <h2>Cover Page</h2>
+                <div>
+                    <label for="cover_page_pdf">Upload Cover Page PDF:</label>
+                    <input type="file" id="cover_page_pdf" name="cover_page_pdf" accept="application/pdf">
+                </div>
+            </div>
+
+            <div id="sectionsContainer">
+                <div class="section" id="fileInputsContainer1">
+                    <button type="button" class="remove-buttonS" onclick="removeSection(this)">Remove Section</button>
+                    <h2>Upload PDF Files</h2>
+                    <div>
+                        <label for="section_title_1">Section Name:</label>
+                        <input type="text" id="section_title_1" name="section_title_1" value="Department Profile"
+                            placeholder="Like Department Profile" required>
+                    </div>
+                    <div class="customization-form">
+                        <div class="customization-section">
+                            <label for="font_style_1">Font Style:</label>
+                            <select id="font_style_1" name="font_style_1">
+                                <option value="Helvetica-Bold">Bold</option>
+                                <option value="Helvetica">Regular</option>
+                                <option value="Times-Bold">Times Bold</option>
+                                <option value="Times-Roman">Times Roman</option>
+                            </select>
+                        </div>
+                        <div class="customization-section">
+                            <label for="font_size_1">Font Size:</label>
+                            <input type="number" id="font_size_1" name="font_size_1" value="24" min="8" max="72">
+                        </div>
+                        <div class="customization-section">
+                            <label for="font_color_1">Font Color:</label>
+                            <input type="color" id="font_color_1" name="font_color_1" value="#000000">
+                        </div>
+                        <div class="customization-section">
+                            <label for="alignment_1">Alignment:</label>
+                            <select id="alignment_1" name="alignment_1">
+                                <option value="center">Center</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="file-input-container">
+                        <label for="pdf_files_1_1">Select PDF file:</label>
+                        <input type="file" id="pdf_files_1_1" name="pdf_files_1_1" accept="application/pdf" required>
+                        <button type="button" class="remove-button" onclick="removeInput(this)">X</button>
+                    </div>
+                    <div class="section-buttons">
+                        <button type="button" class="add-button" onclick="addFileInput('fileInputsContainer1')">Add
+                            Another PDF</button>
+                    </div>
+                </div>
+
+                <div class="section" id="fileInputsContainer2">
+                    <button type="button" class="remove-buttonS" onclick="removeSection(this)">Remove Section</button>
+                    <h2>Upload PDF Files</h2>
+                    <div>
+                        <label for="section_title_2">Section Name:</label>
+                        <input type="text" id="section_title_2" name="section_title_2" value="Curricular Aspects"
+                            placeholder="Like Curricular Aspects" required>
+                    </div>
+                    <div class="customization-form">
+                        <div class="customization-section">
+                            <label for="font_style_2">Font Style:</label>
+                            <select id="font_style_2" name="font_style_2">
+                                <option value="Helvetica-Bold">Bold</option>
+                                <option value="Helvetica">Regular</option>
+                                <option value="Times-Bold">Times Bold</option>
+                                <option value="Times-Roman">Times Roman</option>
+                            </select>
+                        </div>
+                        <div class="customization-section">
+                            <label for="font_size_2">Font Size:</label>
+                            <input type="number" id="font_size_2" name="font_size_2" value="24" min="8" max="72">
+                        </div>
+                        <div class="customization-section">
+                            <label for="font_color_2">Font Color:</label>
+                            <input type="color" id="font_color_2" name="font_color_2" value="#000000">
+                        </div>
+                        <div class="customization-section">
+                            <label for="alignment_2">Alignment:</label>
+                            <select id="alignment_2" name="alignment_2">
+                                <option value="center">Center</option>
+                                <option value="left">Left</option>
+                                <option value="right">Right</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="file-input-container">
+                        <label for="pdf_files_2_1">Select PDF file:</label>
+                        <input type="file" id="pdf_files_2_1" name="pdf_files_2_1" accept="application/pdf" required>
+                        <button type="button" class="remove-button" onclick="removeInput(this)">X</button>
+                    </div>
+                    <div class="section-buttons">
+                        <button type="button" class="add-button" onclick="addFileInput('fileInputsContainer2')">Add
+                            Another PDF</button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="addSectionButton" class="add-button">Add New Section</button>
+            <button type="submit">Merge PDFs</button>
+        </form>
+    </div>
+
+    <script>
+        let sectionCounter = 2;
+
+        function removeInput(button) {
+            button.parentElement.remove();
+        }
+
+        function removeSection(button) {
+            button.closest('.section').remove();
+        }
+
+        function addFileInput(containerId) {
+            const container = document.getElementById(containerId);
+            const sectionNumber = containerId.replace('fileInputsContainer', '');
+            const inputCount = container.querySelectorAll('input[type="file"]').length;
+            const newInputId = `pdf_files_${sectionNumber}_${inputCount + 1}`;
+
+            const newInputDiv = document.createElement('div');
+            newInputDiv.className = 'file-input-container';
+
+            const newLabel = document.createElement('label');
+            newLabel.setAttribute('for', newInputId);
+            newLabel.textContent = 'Select PDF file:';
+
+            const newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.id = newInputId;
+            newInput.name = newInputId;
+            newInput.accept = 'application/pdf';
+            newInput.required = true;
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'remove-button';
+            removeButton.textContent = 'X';
+            removeButton.onclick = function () { removeInput(removeButton); };
+
+            newInputDiv.appendChild(newLabel);
+            newInputDiv.appendChild(newInput);
+            newInputDiv.appendChild(removeButton);
+            container.insertBefore(newInputDiv, container.querySelector('.section-buttons'));
+        }
+
+        function addNewSection() {
+            sectionCounter++;
+            const sectionsContainer = document.getElementById('sectionsContainer');
+
+            // Prompt for section name with a default value
+            const sectionName = prompt('Enter the name of the new section (e.g., Department Profile):', 'Ex. Department Profile');
+            if (!sectionName || sectionName === 'Ex. Department Profile') return;  // Cancelled by user or default value not changed
+
+            const newSection = document.createElement('div');
+            newSection.className = 'section';
+            newSection.id = `fileInputsContainer${sectionCounter}`;
+
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'remove-buttonS';
+            removeButton.textContent = 'Remove Section';
+            removeButton.onclick = function () { removeSection(removeButton); };
+            newSection.appendChild(removeButton);
+
+            const sectionTitleDiv = document.createElement('div');
+            const sectionTitleLabel = document.createElement('label');
+            sectionTitleLabel.setAttribute('for', `section_title_${sectionCounter}`);
+            sectionTitleLabel.textContent = 'Section Name:';
+            const sectionTitleInput = document.createElement('input');
+            sectionTitleInput.type = 'text';
+            sectionTitleInput.id = `section_title_${sectionCounter}`;
+            sectionTitleInput.name = `section_title_${sectionCounter}`;
+            sectionTitleInput.value = sectionName;
+            sectionTitleInput.required = true;
+
+            sectionTitleDiv.appendChild(sectionTitleLabel);
+            sectionTitleDiv.appendChild(sectionTitleInput);
+            newSection.appendChild(sectionTitleDiv);
+
+            const customizationDiv = document.createElement('div');
+            customizationDiv.className = 'customization-form';
+
+            const fontStyleDiv = document.createElement('div');
+            fontStyleDiv.className = 'customization-section';
+            const fontStyleLabel = document.createElement('label');
+            fontStyleLabel.setAttribute('for', `font_style_${sectionCounter}`);
+            fontStyleLabel.textContent = 'Font Style:';
+            const fontStyleSelect = document.createElement('select');
+            fontStyleSelect.id = `font_style_${sectionCounter}`;
+            fontStyleSelect.name = `font_style_${sectionCounter}`;
+            fontStyleSelect.innerHTML = `
+                <option value="Helvetica-Bold">Bold</option>
+                <option value="Helvetica">Regular</option>
+                <option value="Times-Bold">Times Bold</option>
+                <option value="Times-Roman">Times Roman</option>
+            `;
+
+            fontStyleDiv.appendChild(fontStyleLabel);
+            fontStyleDiv.appendChild(fontStyleSelect);
+            customizationDiv.appendChild(fontStyleDiv);
+
+            const fontSizeDiv = document.createElement('div');
+            fontSizeDiv.className = 'customization-section';
+            const fontSizeLabel = document.createElement('label');
+            fontSizeLabel.setAttribute('for', `font_size_${sectionCounter}`);
+            fontSizeLabel.textContent = 'Font Size:';
+            const fontSizeInput = document.createElement('input');
+            fontSizeInput.type = 'number';
+            fontSizeInput.id = `font_size_${sectionCounter}`;
+            fontSizeInput.name = `font_size_${sectionCounter}`;
+            fontSizeInput.value = '24';
+            fontSizeInput.min = '8';
+            fontSizeInput.max = '72';
+
+            fontSizeDiv.appendChild(fontSizeLabel);
+            fontSizeDiv.appendChild(fontSizeInput);
+            customizationDiv.appendChild(fontSizeDiv);
+
+            const fontColorDiv = document.createElement('div');
+            fontColorDiv.className = 'customization-section';
+            const fontColorLabel = document.createElement('label');
+            fontColorLabel.setAttribute('for', `font_color_${sectionCounter}`);
+            fontColorLabel.textContent = 'Font Color:';
+            const fontColorInput = document.createElement('input');
+            fontColorInput.type = 'color';
+            fontColorInput.id = `font_color_${sectionCounter}`;
+            fontColorInput.name = `font_color_${sectionCounter}`;
+            fontColorInput.value = '#000000';
+
+            fontColorDiv.appendChild(fontColorLabel);
+            fontColorDiv.appendChild(fontColorInput);
+            customizationDiv.appendChild(fontColorDiv);
+
+            const alignmentDiv = document.createElement('div');
+            alignmentDiv.className = 'customization-section';
+            const alignmentLabel = document.createElement('label');
+            alignmentLabel.setAttribute('for', `alignment_${sectionCounter}`);
+            alignmentLabel.textContent = 'Alignment:';
+            const alignmentSelect = document.createElement('select');
+            alignmentSelect.id = `alignment_${sectionCounter}`;
+            alignmentSelect.name = `alignment_${sectionCounter}`;
+            alignmentSelect.innerHTML = `
+                <option value="center">Center</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+            `;
+
+            alignmentDiv.appendChild(alignmentLabel);
+            alignmentDiv.appendChild(alignmentSelect);
+            customizationDiv.appendChild(alignmentDiv);
+
+            newSection.appendChild(customizationDiv);
+
+            const inputDiv = document.createElement('div');
+            inputDiv.className = 'file-input-container';
+
+            const label = document.createElement('label');
+            label.setAttribute('for', `pdf_files_${sectionCounter}_1`);
+            label.textContent = 'Select PDF file:';
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.id = `pdf_files_${sectionCounter}_1`;
+            input.name = `pdf_files_${sectionCounter}_1`;
+            input.accept = 'application/pdf';
+            input.required = true;
+
+            const removeButtonInput = document.createElement('button');
+            removeButtonInput.type = 'button';
+            removeButtonInput.className = 'remove-button';
+            removeButtonInput.textContent = 'X';
+            removeButtonInput.onclick = function () { removeInput(removeButtonInput); };
+
+            inputDiv.appendChild(label);
+            inputDiv.appendChild(input);
+            inputDiv.appendChild(removeButtonInput);
+            newSection.appendChild(inputDiv);
+
+            const sectionButtonsDiv = document.createElement('div');
+            sectionButtonsDiv.className = 'section-buttons';
+
+            const addButton = document.createElement('button');
+            addButton.type = 'button';
+            addButton.className = 'add-button';
+            addButton.textContent = 'Add Another PDF';
+            addButton.onclick = function () { addFileInput(`fileInputsContainer${sectionCounter}`); };
+
+            sectionButtonsDiv.appendChild(addButton);
+            newSection.appendChild(sectionButtonsDiv);
+
+            sectionsContainer.appendChild(newSection);
+        }
+
+        document.getElementById('addSectionButton').onclick = addNewSection;
+
+        document.getElementById('pdfForm').onsubmit = async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const response = await fetch('/merge', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.blob();
+                const url = window.URL.createObjectURL(result);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'merged_pdfs.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } else {
+                alert('Error merging PDFs. Please try again.');
+            }
+        };
+    </script>
+</body>
+
+</html>
